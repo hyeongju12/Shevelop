@@ -2,18 +2,27 @@ from django.contrib import admin
 from django.shortcuts import resolve_url
 from django.utils.safestring import mark_safe
 
-from .models import User, Skill
+from .models import User, Skill, Profile
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-	list_display = ['username', 'name', 'company', 'company_email', 'get_avatar', 'phone_number']
+	list_display = ['username', 'name']
+	list_display_links = ['username']
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+	list_display = ['user', 'company', 'company_email', 'get_avatar', 'phone_number']
 
 	def get_avatar(self, obj):
-		if obj.avatar:
-			return mark_safe(f'<img src="{obj.avatar.url}"  style="width: 30px; border-radius: 70%;"/>')
-		else:
-			pydenticon_url = resolve_url('pydenticon_image', obj.username)
-			return mark_safe(f'<img src="{pydenticon_url}" style="width: 30px; border-radius: 70%;" />')
+		return mark_safe(f'<img src="{obj.avatar_url}"  style="width: 30px; border-radius: 70%;"/>')
+
+
+# if obj.avatar:
+		# 	return mark_safe(f'<img src="{obj.avatar.url}"  style="width: 30px; border-radius: 70%;"/>')
+		# else:
+		# 	pydenticon_url = resolve_url('pydenticon_image', obj.username)
+		# 	return mark_safe(f'<img src="{pydenticon_url}" style="width: 30px; border-radius: 70%;" />')
 
 
 @admin.register(Skill)

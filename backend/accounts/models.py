@@ -7,6 +7,15 @@ from django.shortcuts import resolve_url
 class User(AbstractUser):
 	follower_set = models.ManyToManyField("self", blank=True)
 	following_set = models.ManyToManyField("self", blank=True)
+	recommended = models.ManyToManyField('self', blank=True)
+
+	@property
+	def name(self):
+		return f"{self.first_name} {self.last_name}".strip()
+
+
+class Profile(models.Model):
+	user = models.OneToOneField('User', on_delete=models.CASCADE)
 	website_url = models.URLField(blank=True)
 	company = models.CharField(max_length=20, blank=True)
 	company_email = models.EmailField(max_length=50, blank=True)
@@ -19,15 +28,11 @@ class User(AbstractUser):
 	available = models.TextField(blank=True)
 
 	@property
-	def name(self):
-		return f"{self.first_name} {self.last_name}".strip()
-
-	@property
 	def avatar_url(self):
 		if self.avatar:
 			return self.avatar.url
 		else:
-			return resolve_url('pydenticon_image', self.username)
+			return resolve_url('pydenticon_image', self.user.username)
 
 
 class Skill(models.Model):
