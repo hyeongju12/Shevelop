@@ -6,8 +6,8 @@ from django_pydenticon.views import image as pydenticon_image
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
-    path('accounts/', include('allauth.urls')),
+    # path('', include('accounts.urls')),
+    path('accounts/', include('accounts.urls')),
     path('shareinfo/', include('shareinfo.urls')),
     path('codecast/', include('codecast.urls')),
     path('api-auth/', include('rest_framework.urls')),

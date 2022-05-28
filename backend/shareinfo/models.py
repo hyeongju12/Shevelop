@@ -1,11 +1,9 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
-
-User = get_user_model()
 
 
 class Post(models.Model):
-	author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_author')
+	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='post_author')
 	category = models.CharField(max_length=100, default='all')
 	title = models.CharField(max_length=100)
 	content = models.TextField()
@@ -14,7 +12,8 @@ class Post(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	post_tag_set = models.ManyToManyField('Tag', blank=True)
-	post_likes = models.ManyToManyField(User, blank=True, related_name='post_likes')
+	post_likes = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')
+	ip = models.GenericIPAddressField(null=True, editable=False)
 
 	def __str__(self):
 		return self.title + ' | ' + str(self.author)

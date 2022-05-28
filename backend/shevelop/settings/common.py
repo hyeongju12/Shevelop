@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
     'rest_framework',
+    'rest_framework.authtoken',
     # local_app
     'accounts',
     'shareinfo',
@@ -169,4 +170,27 @@ SOCIALACCOUNT_PROVIDERS = {
     #         'read:org',
     #     ],
     # }
+}
+
+#REST_FRAMEWORK
+REST_FRAMEWORK = {
+    'PAGE_SIZE' : 3,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/day',
+        },
+    'DEFAULT_PERMISSION_CLASSES' : [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH' : True,
 }

@@ -6,3 +6,4 @@ python-dotenv
 django-cors-headers
 django-allauth
 pillow
+djangorestframework-jwt

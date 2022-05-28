@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
@@ -15,7 +16,7 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
-	user = models.OneToOneField('User', on_delete=models.CASCADE)
+	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	website_url = models.URLField(blank=True)
 	company = models.CharField(max_length=20, blank=True)
 	company_email = models.EmailField(max_length=50, blank=True)
@@ -32,7 +33,7 @@ class Profile(models.Model):
 		if self.avatar:
 			return self.avatar.url
 		else:
-			return resolve_url('pydenticon_image', self.user.username)
+			return resolve_url('pydenticon_image', self.user.name)
 
 
 class Skill(models.Model):
