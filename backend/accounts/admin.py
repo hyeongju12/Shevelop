@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 
 from .models import User, Skill, Profile
 
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
 	list_display = ['username', 'name']
@@ -16,13 +17,6 @@ class ProfileAdmin(admin.ModelAdmin):
 
 	def get_avatar(self, obj):
 		return mark_safe(f'<img src="{obj.avatar_url}"  style="width: 30px; border-radius: 70%;"/>')
-
-
-# if obj.avatar:
-		# 	return mark_safe(f'<img src="{obj.avatar.url}"  style="width: 30px; border-radius: 70%;"/>')
-		# else:
-		# 	pydenticon_url = resolve_url('pydenticon_image', obj.username)
-		# 	return mark_safe(f'<img src="{pydenticon_url}" style="width: 30px; border-radius: 70%;" />')
 
 
 @admin.register(Skill)

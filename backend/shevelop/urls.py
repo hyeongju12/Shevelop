@@ -6,9 +6,8 @@ from django_pydenticon.views import image as pydenticon_image
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', include('accounts.urls')),
+    path('', include('shareinfo.urls')),
     path('accounts/', include('accounts.urls')),
-    path('shareinfo/', include('shareinfo.urls')),
     path('codecast/', include('codecast.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('identicon/image/<path:data>.png', pydenticon_image, name='pydenticon_image'),

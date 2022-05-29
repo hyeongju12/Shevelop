@@ -12,7 +12,7 @@ class User(AbstractUser):
 
 	@property
 	def name(self):
-		return f"{self.first_name} {self.last_name}".strip()
+		return f"{self.first_name}{self.last_name}".strip()
 
 
 class Profile(models.Model):
@@ -33,7 +33,7 @@ class Profile(models.Model):
 		if self.avatar:
 			return self.avatar.url
 		else:
-			return resolve_url('pydenticon_image', self.user.name)
+			return resolve_url('pydenticon_image', self.user)
 
 
 class Skill(models.Model):

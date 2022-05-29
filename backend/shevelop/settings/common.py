@@ -43,14 +43,14 @@ AUTHENTICATION_BACKENDS = [
 
 # Application definition
 INSTALLED_APPS = [
-    # django_app
+    # django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # third_party
+    # third party
     'debug_toolbar',
     'django_pydenticon',
     'allauth',
@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github',
     'rest_framework',
     'rest_framework.authtoken',
-    # local_app
+    'corsheaders',
+    # local apps
     'accounts',
     'shareinfo',
     'codecast',
@@ -74,6 +75,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'shevelop.urls'
@@ -186,11 +189,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH' : True,
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
