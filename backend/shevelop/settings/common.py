@@ -177,7 +177,6 @@ SOCIALACCOUNT_PROVIDERS = {
 
 #REST_FRAMEWORK
 REST_FRAMEWORK = {
-    'PAGE_SIZE' : 3,
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
     ],
