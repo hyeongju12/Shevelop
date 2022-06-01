@@ -5,13 +5,14 @@ from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify
 
 from . import views
 
-router = DefaultRouter()
-router.register('users', views.UserViewset)
+# router = DefaultRouter()
+# router.register('users', views.UserViewset)
 
 urlpatterns = [
-	path('', include(router.urls)),
-	path('api-token-auth/', obtain_auth_token),
-	path('api-jwt-auth/', obtain_jwt_token),
-	path('api-jwt-auth/refresh/', refresh_jwt_token),
-	path('api-jwt-auth/verify/', verify_jwt_token),
+	path('signup/', views.SignupView.as_view(), name='signup'),
+	# path('', include(router.urls)),
+	# path('api-token-auth/', obtain_auth_token),
+	# path('api-jwt-auth/', obtain_jwt_token),
+	# path('api-jwt-auth/refresh/', refresh_jwt_token),
+	# path('api-jwt-auth/verify/', verify_jwt_token),
 ]

@@ -18,6 +18,8 @@ class PostViewSet(ModelViewSet):
 	serializer_class = PostSerializer
 	permission_classes = [AllowAny]
 
+
+
 #APIView 상속받아 ListView 기능 구현
 # class PostListAPIView(APIView):
 # 	def get(self, request):

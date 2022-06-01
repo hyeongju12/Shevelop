@@ -23,6 +23,9 @@ class Post(BaseModel):
 	like_user_set = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')
 	ip = models.GenericIPAddressField(null=True, editable=False)
 
+	class Meta:
+		ordering = ['-id']
+
 	def __str__(self):
 		return self.title + ' | ' + str(self.author)
 

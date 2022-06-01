@@ -13,13 +13,19 @@ class AuthorSerializer(ModelSerializer):
 class PostSerializer(ModelSerializer):
 	author = AuthorSerializer(read_only=True)
 	is_like = serializers.SerializerMethodField("post_likes_field")
-
-	def post_likes_field(self, post):
-		if 'request' in self.context:
-			user = self.context['request'].user
-			return post.post_likes.filter(pk=user.pk).exists()
-		return False
+	post_tag_set = serializers.CharField(source='extract_tag_list')
 
 	class Meta:
 		model = Post
 		fields = '__all__'
+
+	def post_likes_field(self, post):
+		if 'request' in self.context:
+			user = self.context['request'].user
+			return post.like_user_set.filter(pk=user.pk).exists()
+		return False
+
+	def create(self, validated_data):
+		validated_data['ip'] = self.context.get('request').META.get('REMOTE_ADDR')
+		return Post.objects.create(**validated_data)
+
