@@ -8,11 +8,10 @@ User = get_user_model()
 class ProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Profile
-		fields = ['website_url', 'company', 'company_email', 'bio', 'phone_number']
+		fields = ['website_url', 'company', 'company_email', 'bio']
 
 
 class SignupSerializer(serializers.ModelSerializer):
-	profile = ProfileSerializer(write_only=True)
 	password = serializers.CharField(write_only=True)
 
 	def create(self, validated_data):
@@ -23,4 +22,4 @@ class SignupSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = get_user_model()
-		fields = ['pk', 'username', 'email', 'password', 'profile']
+		fields = ['pk', 'username', 'email', 'password']
