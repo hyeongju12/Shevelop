@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import routers, serializers, viewsets
+
 from .models import Profile
 
 User = get_user_model()
@@ -8,7 +9,7 @@ User = get_user_model()
 class ProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Profile
-		fields = ['website_url', 'company', 'company_email', 'bio']
+		fields = ['company', 'bio', 'skill_set']
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -23,3 +24,11 @@ class SignupSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = get_user_model()
 		fields = ['pk', 'username', 'email', 'password']
+
+
+class SuggestionUserSerializer(serializers.ModelSerializer):
+	profile = ProfileSerializer()
+
+	class Meta:
+		model = User
+		fields = ["profile", "username", "name", "avatar_url"]

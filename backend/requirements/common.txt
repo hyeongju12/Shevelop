@@ -7,3 +7,4 @@ django-cors-headers
 django-allauth
 pillow
 djangorestframework-jwt
+django-pydenticon

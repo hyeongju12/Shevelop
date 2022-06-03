@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.db.models import Q
 from django.http import Http404
 from rest_framework.decorators import api_view, action
 from rest_framework.filters import SearchFilter
@@ -9,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404, RetrieveAPIView
 from rest_framework import generics, status
 # from .permissions import IsAuthorOrReadonly
+from django.utils import timezone
 from .serializers import PostSerializer
 from .models import Post
 
@@ -16,7 +19,17 @@ from .models import Post
 class PostViewSet(ModelViewSet):
 	queryset = Post.objects.all()
 	serializer_class = PostSerializer
-	permission_classes = [AllowAny]
+
+	def get_queryset(self):
+		timesince = timezone.now() - timedelta(days=3)
+		qs = super().get_queryset()
+		qs = qs.filter(
+			Q(author=self.request.user) |
+			Q(author__in=self.request.user.following_set.all())
+		)
+		qs = qs.filter(created_at__gte = timesince)
+		return qs
+	# permission_classes = [AllowAny]
 
 
 
