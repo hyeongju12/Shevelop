@@ -11,6 +11,7 @@ class User(AbstractUser):
 	follower_set = models.ManyToManyField("self", blank=True)
 	following_set = models.ManyToManyField("self", blank=True)
 	recommended = models.ManyToManyField('self', blank=True)
+	is_active = models.BooleanField(default=False)
 
 	@property
 	def name(self):
@@ -26,10 +27,10 @@ class User(AbstractUser):
 
 class Profile(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-	website_url = models.URLField(blank=True)
-	company = models.CharField(max_length=20, blank=True)
-	company_email = models.EmailField(max_length=50, blank=True)
-	bio = models.TextField(blank=True)
+	website_url = models.URLField(default='')
+	company = models.CharField(max_length=20, default='')
+	company_email = models.EmailField(max_length=50, default='')
+	bio = models.TextField(default='')
 	skill_set = models.ManyToManyField('Skill', blank=True)
 	location = models.CharField(max_length=100, blank=True)
 	phone_number = models.CharField(max_length=14, validators=[RegexValidator(r'^010-?[\d]{4}-?[\d]{4}$')], blank=True)

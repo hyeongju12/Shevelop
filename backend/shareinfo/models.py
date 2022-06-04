@@ -22,6 +22,7 @@ class Post(BaseModel):
 	post_tag_set = models.ManyToManyField('Tag', blank=True)
 	like_user_set = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')
 	ip = models.GenericIPAddressField(null=True, editable=False)
+	is_public = models.BooleanField(default=True)
 
 	class Meta:
 		ordering = ['-id']

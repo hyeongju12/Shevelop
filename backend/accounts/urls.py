@@ -14,4 +14,7 @@ urlpatterns = [
 	path('token/refresh/', refresh_jwt_token),
 	path('token/verify/', verify_jwt_token),
 	path('suggestions/', views.SuggestionListAPIView.as_view(), name="suggestion_user_list"),
+	path('followings/', views.FollowingUserListAPIView.as_view(), name="following_user_list"),
+	path('follow/', views.user_follow, name='user_follow'),
+	path('unfollow/', views.user_unfollow, name='user_unfollow'),
 ]
