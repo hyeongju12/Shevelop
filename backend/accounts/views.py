@@ -25,6 +25,11 @@ class SuggestionListAPIView(ListAPIView):
 		qs = qs.exclude(pk__in=self.request.user.following_set.all())
 		return qs
 
+	def get_serializer_context(self):
+		context = super().get_serializer_context()
+		context["request"] = self.request
+		return context
+
 
 class FollowingUserListAPIView(ListAPIView):
 	queryset = User.objects.all()
@@ -35,6 +40,11 @@ class FollowingUserListAPIView(ListAPIView):
 		qs = qs.exclude(username=self.request.user.username)
 		qs = qs.filter(pk__in=self.request.user.following_set.all())
 		return qs
+
+	def get_serializer_context(self):
+		context = super().get_serializer_context()
+		context["request"] = self.request
+		return context
 
 
 @api_view(["POST"])

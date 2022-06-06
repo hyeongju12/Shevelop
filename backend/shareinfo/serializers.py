@@ -1,23 +1,38 @@
+import re
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from .models import Post
+from .models import Post, Comment
 
 
 class AuthorSerializer(ModelSerializer):
+	avatar_url = serializers.SerializerMethodField("avatar_url_field")
+
+	def avatar_url_field(self, author):
+		if re.match(r"^https?://", author.avatar_url):
+			return author.avatar_url
+		if 'request' in self.context:
+			scheme = self.context['request'].scheme
+			host = self.context['request'].get_host()
+			return scheme + '://' + host + author.avatar_url
+
+		request
+
 	class Meta:
 		model = get_user_model()
-		fields = ['username']
+		fields = ['username', "name", "avatar_url"]
 
 
 class PostSerializer(ModelSerializer):
 	author = AuthorSerializer(read_only=True)
 	is_like = serializers.SerializerMethodField("post_likes_field")
-	post_tag_set = serializers.CharField(source='extract_tag_list')
+	post_tag_set = serializers.CharField(source='extract_tag_list', read_only=True)
 
 	class Meta:
 		model = Post
-		fields = '__all__'
+		fields = ['author', 'is_like', 'post_tag_set', 'title'
+			, 'category', 'content', 'attached_file', 'cover_img'
+			, 'is_public', 'created_at', 'updated_at', 'id']
 
 	def post_likes_field(self, post):
 		if 'request' in self.context:
@@ -25,7 +40,10 @@ class PostSerializer(ModelSerializer):
 			return post.like_user_set.filter(pk=user.pk).exists()
 		return False
 
-	def create(self, validated_data):
-		validated_data['ip'] = self.context.get('request').META.get('REMOTE_ADDR')
-		return Post.objects.create(**validated_data)
 
+class CommentSerializer(serializers.ModelSerializer):
+	author = AuthorSerializer(read_only=True)
+
+	class Meta:
+		model = Comment
+		fields = ["id", "author", "message", 'created_at']

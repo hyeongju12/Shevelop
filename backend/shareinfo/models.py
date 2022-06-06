@@ -15,10 +15,10 @@ class BaseModel(models.Model):
 class Post(BaseModel):
 	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='post_author')
 	category = models.CharField(max_length=100, default='all')
-	title = models.CharField(max_length=100)
-	content = models.TextField()
-	attached_file = models.FileField(blank=True, upload_to="shareinfo/post/cover/%Y/%m/%d")
-	cover_img = models.ImageField(blank=True, upload_to="shareinfo/post/cover/%Y/%m/%d")
+	title = models.CharField(max_length=100, default='')
+	content = models.TextField(default='')
+	attached_file = models.FileField(blank=True, null=True, upload_to="shareinfo/post/cover/%Y/%m/%d", verbose_name='Attached File')
+	cover_img = models.ImageField(blank=True, null=True, upload_to="shareinfo/post/cover/%Y/%m/%d", verbose_name='Cover Image')
 	post_tag_set = models.ManyToManyField('Tag', blank=True)
 	like_user_set = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')
 	ip = models.GenericIPAddressField(null=True, editable=False)
@@ -54,6 +54,7 @@ class Post(BaseModel):
 class Comment(BaseModel):
 	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	post = models.ForeignKey(Post, on_delete=models.CASCADE)
+	comment_ip = models.GenericIPAddressField(null=True, editable=False)
 	message = models.TextField()
 
 	class Meta:
