@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.http import Http404
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.permissions import AllowAny
-from rest_framework.generics import CreateAPIView, ListAPIView, get_object_or_404
-from .serializers import SignupSerializer, SuggestionUserSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import CreateAPIView, ListAPIView, get_object_or_404, RetrieveAPIView
+from rest_framework.views import APIView
+
+from .serializers import SignupSerializer, SuggestionUserSerializer, UserSerializer
 from rest_framework.response import Response
 
 User = get_user_model()
@@ -13,6 +16,20 @@ class SignupView(CreateAPIView):
 	model = User
 	serializer_class = SignupSerializer
 	permission_classes = [AllowAny]
+
+
+class UserInfoView(APIView):
+	serializer_class = UserSerializer
+	permission_classes = [IsAuthenticated]
+
+	def get_object(self, username):
+		user = get_object_or_404(User, username=username)
+		return user
+
+	def get(self, request, format=None):
+		userinfo = self.get_object(username=request.user.username)
+		serializer = UserSerializer(userinfo)
+		return Response(serializer.data)
 
 
 class SuggestionListAPIView(ListAPIView):

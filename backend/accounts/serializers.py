@@ -1,9 +1,29 @@
+import re
+import os
+import dotenv
+from shevelop.settings.common import BASE_DIR
 from django.contrib.auth import get_user_model
 from rest_framework import  serializers
-import re
 from .models import Profile
 
+dotenv_file = os.path.join(BASE_DIR, '.env')
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
+HOST = os.environ['HOST']
+
 User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+	avatar_url = serializers.SerializerMethodField("avatar_url_field")
+
+	def avatar_url_field(self, user):
+		return HOST + user.avatar_url
+
+	class Meta:
+		model = User
+		fields = ['id', 'username', 'avatar_url']
 
 
 class ProfileSerializer(serializers.ModelSerializer):

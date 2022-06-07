@@ -11,7 +11,7 @@ class User(AbstractUser):
 	follower_set = models.ManyToManyField("self", blank=True)
 	following_set = models.ManyToManyField("self", blank=True)
 	recommended = models.ManyToManyField('self', blank=True)
-	is_active = models.BooleanField(default=False)
+	is_active = models.BooleanField(default=True)
 
 	@property
 	def name(self):
