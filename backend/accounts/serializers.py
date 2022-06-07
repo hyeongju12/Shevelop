@@ -3,12 +3,12 @@ import os
 import dotenv
 from shevelop.settings.common import BASE_DIR
 from django.contrib.auth import get_user_model
-from rest_framework import  serializers
+from rest_framework import serializers
 from .models import Profile
 
 dotenv_file = os.path.join(BASE_DIR, '.env')
 if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
+	dotenv.load_dotenv(dotenv_file)
 
 HOST = os.environ['HOST']
 
@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = User
-		fields = ['id', 'username', 'avatar_url']
+		fields = ['id', 'username', 'avatar_url', 'first_name', 'last_name', 'is_active']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
