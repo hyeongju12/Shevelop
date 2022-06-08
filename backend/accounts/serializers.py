@@ -9,27 +9,26 @@ from .models import Profile
 dotenv_file = os.path.join(BASE_DIR, '.env')
 if os.path.isfile(dotenv_file):
 	dotenv.load_dotenv(dotenv_file)
-
 HOST = os.environ['HOST']
 
 User = get_user_model()
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Profile
+		fields = ['bio', 'skill_set', 'company',  'company_email']
+
+
 class UserSerializer(serializers.ModelSerializer):
-	avatar_url = serializers.SerializerMethodField("avatar_url_field")
+	avatar_url = serializers.SerializerMethodField("avatar_url_field", read_only=True)
 
 	def avatar_url_field(self, user):
 		return HOST + user.avatar_url
 
 	class Meta:
 		model = User
-		fields = ['id', 'username', 'avatar_url', 'first_name', 'last_name', 'is_active']
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Profile
-		fields = ['company', 'bio', 'skill_set']
+		fields = ['id', 'avatar', 'avatar_url', 'email', 'first_name', 'last_name', 'is_active']
 
 
 class SignupSerializer(serializers.ModelSerializer):

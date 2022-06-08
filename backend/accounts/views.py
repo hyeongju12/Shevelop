@@ -1,12 +1,11 @@
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListAPIView, get_object_or_404
 from rest_framework.views import APIView
-from .serializers import SignupSerializer, SuggestionUserSerializer, UserSerializer
+from .serializers import SignupSerializer, SuggestionUserSerializer, UserSerializer, ProfileSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
+from .models import Profile
 
 User = get_user_model()
 
@@ -14,13 +13,10 @@ User = get_user_model()
 class SignupView(CreateAPIView):
 	model = User
 	serializer_class = SignupSerializer
-	permission_classes = [AllowAny]
 
 
-class UserInfoView(APIView):
+class UserUpdateView(APIView):
 	serializer_class = UserSerializer
-	permission_classes = [IsAuthenticated]
-	http_method_names = ['GET']
 
 	def get_object(self, username):
 		user = get_object_or_404(User, username=username)
@@ -30,6 +26,40 @@ class UserInfoView(APIView):
 		userinfo = self.get_object(username=request.user.username)
 		serializer = UserSerializer(userinfo)
 		return Response(serializer.data)
+
+	def patch(self, request, format=None):
+		user = self.get_object(username=request.user.username)
+		serializer = UserSerializer(instance=user, data=request.data, partial=True)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status.HTTP_200_OK)
+		return Response(serializer.errors, status.HTTP_404_NOT_FOUND)
+
+	def delete(self, request):
+		user = self.get_object(username=request.user.username)
+		user.delete()
+		return Response(status.HTTP_204_NO_CONTENT)
+
+
+class ProfileUpdateView(APIView):
+	serializer_class = ProfileSerializer
+
+	def get_object(self, user):
+		profile = get_object_or_404(Profile, user=user)
+		return profile
+
+	def get(self, request, format=None):
+		profile = self.get_object(user=request.user)
+		serializer = ProfileSerializer(profile)
+		return Response(serializer.data)
+
+	def patch(self, request, format=None):
+		profile = self.get_object(user=request.user)
+		serializer = ProfileSerializer(instance=profile, data=request.data, partial=True)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status.HTTP_200_OK)
+		return Response(serializer.errors, status.HTTP_404_NOT_FOUND)
 
 
 class SuggestionListAPIView(ListAPIView):

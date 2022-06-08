@@ -16,7 +16,7 @@ class AuthorSerializer(ModelSerializer):
 			host = self.context['request'].get_host()
 			return scheme + '://' + host + author.avatar_url
 
-		request
+			request
 
 	class Meta:
 		model = get_user_model()
@@ -39,6 +39,17 @@ class PostSerializer(ModelSerializer):
 			user = self.context['request'].user
 			return post.like_user_set.filter(pk=user.pk).exists()
 		return False
+
+
+class PostListSerializer(ModelSerializer):
+	author = AuthorSerializer(read_only=True)
+	post_tag_set = serializers.CharField(source='extract_tag_list', read_only=True)
+
+	class Meta:
+		model = Post
+		fields = ['author', 'post_tag_set', 'title'
+			, 'category', 'content', 'attached_file', 'cover_img'
+			, 'is_public', 'created_at', 'updated_at', 'id']
 
 
 class CommentSerializer(serializers.ModelSerializer):

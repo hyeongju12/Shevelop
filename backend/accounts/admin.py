@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.shortcuts import resolve_url
 from django.utils.safestring import mark_safe
 
-from .models import User, Skill, Profile
+from .models import User, Profile
 
 
 @admin.register(User)
@@ -17,10 +17,3 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 	list_display = ['user', 'company', 'company_email', 'phone_number']
-
-
-
-
-@admin.register(Skill)
-class SkillAdmin(admin.ModelAdmin):
-	list_display = ['skill']

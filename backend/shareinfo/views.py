@@ -1,12 +1,29 @@
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import get_object_or_404
-from .serializers import PostSerializer, CommentSerializer
+from .serializers import PostSerializer, CommentSerializer, PostListSerializer
 from .models import Post, Comment
+
+
+class PostListUpdateViewSet(ViewSet):
+	def list(self, request):
+		queryset = Post.objects.all().filter(author=self.request.user)
+		serializer = PostListSerializer(queryset, many=True)
+		return Response(serializer.data)
+
+	def partial_update(self, request, pk=None):
+		post = Post.objects.filter(author=self.request.user).get(pk=pk)
+		serializer = PostListSerializer(instance=post, data=request.data, partial=True)
+		if serializer.is_valid():
+			if serializer.data['author'] != self.request.user:
+				return Response(status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+			serializer.save()
+			return Response(serializer.data, status.HTTP_200_OK)
+		return Response(serializer.errors, status.HTTP_404_NOT_FOUND)
 
 
 class PostViewSet(ModelViewSet):

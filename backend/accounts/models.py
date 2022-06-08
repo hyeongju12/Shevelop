@@ -31,14 +31,7 @@ class Profile(models.Model):
 	company = models.CharField(max_length=20, default='')
 	company_email = models.EmailField(max_length=50, default='')
 	bio = models.TextField(default='')
-	skill_set = models.ManyToManyField('Skill', blank=True)
+	skill_set = models.CharField(max_length=20, blank=True)
 	location = models.CharField(max_length=100, blank=True)
 	phone_number = models.CharField(max_length=14, validators=[RegexValidator(r'^010-?[\d]{4}-?[\d]{4}$')], blank=True)
 	available = models.TextField(blank=True)
-
-
-class Skill(models.Model):
-	skill = models.CharField(max_length=20)
-
-	def __str__(self):
-		return self.skill
