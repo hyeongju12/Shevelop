@@ -1,6 +1,8 @@
 import re
 import os
 import dotenv
+from django.contrib.auth.password_validation import validate_password
+
 from shevelop.settings.common import BASE_DIR
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -45,6 +47,18 @@ class SignupSerializer(serializers.ModelSerializer):
 		fields = ['pk', 'username', 'email', 'password']
 
 
+
+class ChangePasswordSerializer(serializers.Serializer):
+	model = User
+
+	old_password = serializers.CharField(required=True)
+	new_password = serializers.CharField(required=True)
+
+	def validate_new_password(self, value):
+		validate_password(value)
+		return value
+
+
 class SuggestionUserSerializer(serializers.ModelSerializer):
 	profile = ProfileSerializer()
 	avatar_url = serializers.SerializerMethodField("avatar_url_field")
@@ -61,4 +75,4 @@ class SuggestionUserSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = User
-		fields = ["profile", "username", "name", "avatar_url"]
+		fields = ["profile", "username", "name", "avatar_url", "email"]

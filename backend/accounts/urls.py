@@ -6,6 +6,8 @@ from .views import UserUpdateView, ProfileUpdateView
 
 urlpatterns = [
 	path('signup/', views.SignupView.as_view(), name='signup'),
+	path('withdrawal/', views.WithdrawalView.as_view(), name='withdrawal'),
+	path('change/', views.ChangePasswordView.as_view(), name='change_password'),
 	path('token/', obtain_jwt_token),
 	path('token/refresh/', refresh_jwt_token),
 	path('token/verify/', verify_jwt_token),

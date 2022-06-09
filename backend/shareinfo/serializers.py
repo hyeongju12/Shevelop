@@ -1,22 +1,24 @@
 import re
+import os
+import dotenv
+from shevelop.settings.common import BASE_DIR
+import re
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import Post, Comment
 
+dotenv_file = os.path.join(BASE_DIR, '.env')
+if os.path.isfile(dotenv_file):
+	dotenv.load_dotenv(dotenv_file)
+HOST = os.environ['HOST']
+
 
 class AuthorSerializer(ModelSerializer):
-	avatar_url = serializers.SerializerMethodField("avatar_url_field")
+	avatar_url = serializers.SerializerMethodField("avatar_url_field", read_only=True)
 
-	def avatar_url_field(self, author):
-		if re.match(r"^https?://", author.avatar_url):
-			return author.avatar_url
-		if 'request' in self.context:
-			scheme = self.context['request'].scheme
-			host = self.context['request'].get_host()
-			return scheme + '://' + host + author.avatar_url
-
-			request
+	def avatar_url_field(self, user):
+		return HOST + user.avatar_url
 
 	class Meta:
 		model = get_user_model()
@@ -50,6 +52,23 @@ class PostListSerializer(ModelSerializer):
 		fields = ['author', 'post_tag_set', 'title'
 			, 'category', 'content', 'attached_file', 'cover_img'
 			, 'is_public', 'created_at', 'updated_at', 'id']
+
+
+class PostUpdateSerializer(ModelSerializer):
+	class Meta:
+		model = Post
+		fields = ['title', 'category', 'content', 'attached_file', 'cover_img']
+
+		def update(self, instance, validated_data):
+			instance.cover_img = validated_data.get('cover_img', instance.cover_img)
+			instance.save()
+			return instance
+
+
+class PostImageUpdateSerializer(ModelSerializer):
+	class Meta:
+		model = Post
+		fields = ['cover_img']
 
 
 class CommentSerializer(serializers.ModelSerializer):

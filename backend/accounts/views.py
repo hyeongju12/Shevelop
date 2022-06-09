@@ -1,7 +1,9 @@
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView, get_object_or_404
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from .serializers import SignupSerializer, SuggestionUserSerializer, UserSerializer, ProfileSerializer
+from .serializers import SignupSerializer, SuggestionUserSerializer, UserSerializer, ProfileSerializer, \
+	ChangePasswordSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -13,6 +15,46 @@ User = get_user_model()
 class SignupView(CreateAPIView):
 	model = User
 	serializer_class = SignupSerializer
+	permission_classes = [AllowAny]
+
+
+class ChangePasswordView(APIView):
+	serializer_class = ChangePasswordSerializer
+	model = User
+	permission_classes = (IsAuthenticated,)
+
+	def get_object(self, queryset=None):
+		user = self.request.user
+		return user
+
+	def put(self, request, *args, **kwargs):
+			self.object = self.get_object()
+			serializer = ChangePasswordSerializer(data=request.data)
+
+			if serializer.is_valid():
+				# Check old password
+				old_password = serializer.data.get("old_password")
+				if not self.object.check_password(old_password):
+					return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+				# set_password also hashes the password that the user will get
+				self.object.set_password(serializer.data.get("new_password"))
+				self.object.save()
+				return Response(status=status.HTTP_204_NO_CONTENT)
+
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WithdrawalView(APIView):
+	serializer_class = UserSerializer
+
+	def get_object(self, username):
+		user = get_object_or_404(User, username=username)
+		return user
+
+	def delete(self, request):
+		user = self.get_object(username=request.user.username)
+		user.delete()
+		return Response(status.HTTP_204_NO_CONTENT)
 
 
 class UserUpdateView(APIView):
@@ -34,11 +76,6 @@ class UserUpdateView(APIView):
 			serializer.save()
 			return Response(serializer.data, status.HTTP_200_OK)
 		return Response(serializer.errors, status.HTTP_404_NOT_FOUND)
-
-	def delete(self, request):
-		user = self.get_object(username=request.user.username)
-		user.delete()
-		return Response(status.HTTP_204_NO_CONTENT)
 
 
 class ProfileUpdateView(APIView):

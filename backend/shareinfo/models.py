@@ -17,7 +17,7 @@ class Post(BaseModel):
 	category = models.CharField(max_length=100, default='all')
 	title = models.CharField(max_length=100, default='')
 	content = models.TextField(default='')
-	attached_file = models.FileField(blank=True, null=True, upload_to="shareinfo/post/cover/%Y/%m/%d", verbose_name='Attached File')
+	attached_file = models.FileField(blank=True, null=True, upload_to="shareinfo/post/file/%Y/%m/%d", verbose_name='Attached File')
 	cover_img = models.ImageField(blank=True, null=True, upload_to="shareinfo/post/cover/%Y/%m/%d", verbose_name='Cover Image')
 	post_tag_set = models.ManyToManyField('Tag', blank=True)
 	like_user_set = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')

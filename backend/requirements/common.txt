@@ -8,4 +8,3 @@ django-allauth
 pillow
 djangorestframework-jwt
 django-pydenticon
-djangorestframework-simplejwt

@@ -68,12 +68,14 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     # local apps
+    "annoying",
     'accounts',
     'shareinfo',
     'codecast',
 ]
 
 MIDDLEWARE = [
+    'annoying.middlewares.StaticServe',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

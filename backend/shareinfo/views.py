@@ -5,25 +5,36 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import get_object_or_404
-from .serializers import PostSerializer, CommentSerializer, PostListSerializer
+from .serializers import PostSerializer, CommentSerializer, PostListSerializer, PostUpdateSerializer
 from .models import Post, Comment
 
 
 class PostListUpdateViewSet(ViewSet):
+	parser_classes = [MultiPartParser, FormParser]
+
 	def list(self, request):
 		queryset = Post.objects.all().filter(author=self.request.user)
 		serializer = PostListSerializer(queryset, many=True)
 		return Response(serializer.data)
 
-	def partial_update(self, request, pk=None):
-		post = Post.objects.filter(author=self.request.user).get(pk=pk)
-		serializer = PostListSerializer(instance=post, data=request.data, partial=True)
+	def partial_update(self, request, *args, **kwargs):
+		post = Post.objects.get(pk=kwargs.get('pk'))
+		serializer = PostUpdateSerializer(instance=post, data=request.data, partial=True)
+		if post.author != self.request.user:
+			return Response(status.HTTP_401_UNAUTHORIZED)
 		if serializer.is_valid():
-			if serializer.data['author'] != self.request.user:
-				return Response(status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 			serializer.save()
 			return Response(serializer.data, status.HTTP_200_OK)
-		return Response(serializer.errors, status.HTTP_404_NOT_FOUND)
+		return Response(serializer.errors)
+
+	def destroy(self, request, pk=None):
+		post = Post.objects.filter(author=self.request.user).get(pk=pk)
+		if post.author != request.user:
+			return Response(status.HTTP_401_UNAUTHORIZED)
+		if post is None:
+			return Response(status.HTTP_403_FORBIDDEN)
+		post.delete()
+		return Response(status.HTTP_204_NO_CONTENT)
 
 
 class PostViewSet(ModelViewSet):
